@@ -1,13 +1,27 @@
 #include <stdio.h>
 #include <vector>
 #include <iostream>
+#include "../include/file_reader.h"
 #include <ilcplex/ilocplex.h>
 
-int main()
+int main(int argc, char *argv[])
 {
     int n;
-    std::cin >> n;
+
+    /*
+    std::string path = "instance/";
+    GraphAdjacencyList *graph;
+    GraphAdjacencyMatrix *graph_m;
+    FileReader fileReader(path + argv[0], &n);
+    graph = new GraphAdjacencyList(n);
+    graph_m = new GraphAdjacencyMatrix(n);
+    fileReader.createGraph(graph, graph_m);
+    */
+
     std::vector<std::vector<int> >weight(n, std::vector<int>(n));
+
+    
+    std::cin >> n;
 
     for (int i = 0; i < n; i++)
     {
@@ -30,6 +44,7 @@ int main()
         for (int j = 0; j < n; j++)
         {
             d[i].add(weight[i][j]);
+            //d[i].add(graph_m->matrix[i][j]);
         }
     }
 
@@ -58,7 +73,7 @@ int main()
             if (i == j) continue;
             sum_ij += x[i][j];
         }
-
+        
         model.add(sum_ij == 1);
     }
 
@@ -90,7 +105,7 @@ int main()
 	std::cout << std::endl;
 	IloCplex cplex(model);
     cplex.setParam(IloCplex::TiLim, 2*60*60);
-    cplex.setParam(IloCplex::Threads, 1);
+    //cplex.setParam(IloCplex::Threads, 8);
     cplex.exportModel("model.lp");
 
     try
@@ -99,7 +114,7 @@ int main()
 		{
 			env.out() << "\nSolution Status = " << cplex.getStatus() << std::endl;
 			env.out() << "Solution value = " << cplex.getObjValue() << std::endl;
-			
+			/*
 			for(int i = 0; i < n; i++)
 			{
 				for(int j = 0; j < n; j++)
@@ -111,6 +126,7 @@ int main()
 					else std::cout << abs(cplex.getValue(x[i][j])) << " ";
 				std::cout << std::endl;
 			}
+            */
 		}
    	}
    	catch(IloException& e)

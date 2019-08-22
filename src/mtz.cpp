@@ -8,19 +8,31 @@ int main(int argc, char *argv[])
 {
     int n;
 
-    /*
+    
     std::string path = "instance/";
-    GraphAdjacencyList *graph;
-    GraphAdjacencyMatrix *graph_m;
-    FileReader fileReader(path + argv[0], &n);
-    graph = new GraphAdjacencyList(n);
-    graph_m = new GraphAdjacencyMatrix(n);
-    fileReader.createGraph(graph, graph_m);
-    */
+    GraphAdjacencyList *graph_adj;
+    GraphAdjacencyMatrix *graph_mtx;
+    std::cout << path + argv[1] << std::endl;
+    FileReader fileReader(path + argv[1], &n);
+    graph_adj = new GraphAdjacencyList(n);
+    graph_mtx = new GraphAdjacencyMatrix(n);
+    fileReader.createGraph(graph_adj, graph_mtx);
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            std::cout << graph_mtx->matrix[i][j] << "\t";
+        }
+        std::cout << std::endl;
+        
+    }
+    
+    
 
     std::vector<std::vector<int> >weight(n, std::vector<int>(n));
 
-    
+    /*
     std::cin >> n;
 
     for (int i = 0; i < n; i++)
@@ -29,7 +41,7 @@ int main(int argc, char *argv[])
         {
             std::cin >> weight[i][j];
         }   
-    }
+    }*/
     
     IloEnv env;
     IloModel model(env);
@@ -43,8 +55,8 @@ int main(int argc, char *argv[])
         d[i] = IloIntArray(env);
         for (int j = 0; j < n; j++)
         {
-            d[i].add(weight[i][j]);
-            //d[i].add(graph_m->matrix[i][j]);
+            //d[i].add(weight[i][j]);
+            d[i].add(graph_mtx->matrix[i][j]);
         }
     }
 
@@ -104,8 +116,8 @@ int main(int argc, char *argv[])
     /* Resolve o Modelo */
 	std::cout << std::endl;
 	IloCplex cplex(model);
-    cplex.setParam(IloCplex::TiLim, 2*60*60);
-    //cplex.setParam(IloCplex::Threads, 8);
+    cplex.setParam(IloCplex::TiLim, 2*60*60*60);
+    cplex.setParam(IloCplex::Threads, 8);
     cplex.exportModel("model.lp");
 
     try

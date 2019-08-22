@@ -24,17 +24,14 @@ FileReader::FileReader( std::string filename, int *size )
     std::stringstream ss( line );
     ss >> line >> this->size;
     *size = this->size;
+    std::cout << *size << std::endl;
     getline( *input_file, line );
-    getline( *input_file, line );
-    std::cout << line << std::endl;
-    getline( *input_file, line );
-    std::cout << line << std::endl;
     getline( *input_file, line );
     std::cout << line << std::endl;
     printf("\n");
 }
 
-void FileReader::createGraph( GraphAdjacencyList *graph_adj, GraphAdjacencyMatrix *graph_mat )
+void FileReader::createGraph( GraphAdjacencyList *graph_adj, GraphAdjacencyMatrix *graph_mtx )
 {
 //    freopen( "out", "w", stdout );
 //    GraphAdjacencyMatrix g(size);
@@ -48,7 +45,7 @@ void FileReader::createGraph( GraphAdjacencyList *graph_adj, GraphAdjacencyMatri
     {
         std::stringstream ss( line );
         ss >> v >> x >> y;
-        //std::cout << v << " " << x << " " << y << std::endl;
+        std::cout << v << " " << x << " " << y << std::endl;
         vet.push_back( std::make_pair( x, y ));
     }
 
@@ -62,10 +59,10 @@ void FileReader::createGraph( GraphAdjacencyList *graph_adj, GraphAdjacencyMatri
             int weight = ( int ) round( distance );
             if ( weight )
                 graph_adj->addEdge( i, j, weight );
-            graph_mat->addEdge( i, j, weight );
+            graph_mtx->addEdge( i, j, weight );
         }
     }
 
-    std::cout << graph_mat->matrix[0][0] << " " << graph_mat->matrix[1][1] << " " << graph_mat->matrix[1049][1049] << " " ;
+    std::cout << graph_mtx->matrix[0][0] << " " << graph_mtx->matrix[1][1] << " " << graph_mtx->matrix[size-1][size-1] << " \n" ;
 
 }

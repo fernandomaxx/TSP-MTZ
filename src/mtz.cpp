@@ -7,17 +7,23 @@
 int main(int argc, char *argv[])
 {
     int n;
-
-    
-    std::string path = "instance/";
     GraphAdjacencyList *graph_adj;
     GraphAdjacencyMatrix *graph_mtx;
+
+    /* TOUR */
+    std::vector<std::pair<int, int>> tour;
+
+    /* Read instances */
+    std::string path = "instance/";
     std::cout << path + argv[1] << std::endl;
     FileReader fileReader(path + argv[1], &n);
+
+    /* Graph */
     graph_adj = new GraphAdjacencyList(n);
     graph_mtx = new GraphAdjacencyMatrix(n);
     fileReader.createGraph(graph_adj, graph_mtx);
 
+    /* Show Graph */
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
@@ -27,8 +33,6 @@ int main(int argc, char *argv[])
         std::cout << std::endl;
         
     }
-    
-    
 
     std::vector<std::vector<int> >weight(n, std::vector<int>(n));
 
@@ -126,8 +130,8 @@ int main(int argc, char *argv[])
 		{
 			env.out() << "\nSolution Status = " << cplex.getStatus() << std::endl;
 			env.out() << "Solution value = " << cplex.getObjValue() << std::endl;
-			/*
-			for(int i = 0; i < n; i++)
+			
+			/* for(int i = 0; i < n; i++)
 			{
 				for(int j = 0; j < n; j++)
 					if(i == j)
@@ -138,7 +142,32 @@ int main(int argc, char *argv[])
 					else std::cout << abs(cplex.getValue(x[i][j])) << " ";
 				std::cout << std::endl;
 			}
-            */
+             */
+
+            for(int i = 0; i < n; i++)
+				for(int j = 0; j < n; j++)
+					if (abs(cplex.getValue(x[i][j])))
+                        tour.push_back(std::make_pair(i, j));
+            
+            std::cout << tour[0].first << "\n";
+            int init = tour[0].second;
+            tour.erase(tour.begin());
+
+            while (tour.size() > 1)
+            {
+                for (auto it = tour.begin(); it != tour.end(); it++)
+                {
+                    if (it->first == init)
+                    {
+                        std::cout << it->first << "\n";
+                        init = it->second;
+                        tour.erase(it);
+                        break;
+                    }
+                }
+            }
+
+            std::cout << tour[0].first << "\n" << tour[0].second << "\n";
 		}
    	}
    	catch(IloException& e)
